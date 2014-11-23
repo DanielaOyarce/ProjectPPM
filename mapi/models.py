@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib import admin
+from aircraft.models import aircraft
+
+
 
 class Mapi(models.Model):
-	aircraft = models.CharField(max_length = 20)
+	aircraft = models.ForeignKey(aircraft)
 	ata = models.IntegerField()
 	subAta = models.IntegerField()
 	week = models.IntegerField()
@@ -22,8 +25,6 @@ class Mapi(models.Model):
 	status = models.CharField(max_length = 20)
 	foundOnDate = models.DateTimeField()
 
-#class Mapi(admin.ModelAdmin): Para arreglar el modulo administrativo
-
-		
+#class Mapi(admin.ModelAdmin): Para arreglar el modulo administrativo		
 
 admin.site.register(Mapi)
