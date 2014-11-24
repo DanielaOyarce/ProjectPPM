@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
             name='Mapi',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('aircraft', models.CharField(max_length=20)),
                 ('ata', models.IntegerField()),
                 ('subAta', models.IntegerField()),
                 ('week', models.IntegerField()),
