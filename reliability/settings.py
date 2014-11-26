@@ -24,6 +24,8 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+#TEMPLATE_DIRS = ('C:/Python/Project_Pireps_Mareps/reliability/templates')
+
 ALLOWED_HOSTS = []
 
 
