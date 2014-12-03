@@ -10,7 +10,7 @@ class Manufacturer(models.Model):
 
 class Fleet(models.Model):
 	name = models.CharField(max_length=20, unique=True)
-	manufacturer = models.ForeignKey(Manufacturer)
+	manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
 	status = models.BooleanField(default=True)
 	def __str__(self):
 		return self.name
@@ -18,7 +18,7 @@ class Fleet(models.Model):
 
 class Operator(models.Model):
 	name = models.CharField(max_length=20, unique=True)
-	logo = models.ImageField(upload_to='logos')
+	logo = models.ImageField(upload_to='logos', blank=True, null=True)
 	status = models.BooleanField(default=True)
 	def __str__(self):
 		return self.name
@@ -27,7 +27,7 @@ class Operator(models.Model):
 class Aircraft(models.Model):
 	name = models.CharField(max_length=20, unique=True)
 	fleet = models.ForeignKey(Fleet)
-	operator = models.ManyToManyField(Operator)
+	operator = models.ManyToManyField(Operator, blank=True, null=True)
 	status = models.BooleanField(default=True)
 	def __str__(self):
 		return self.name

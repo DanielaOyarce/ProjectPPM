@@ -1,6 +1,6 @@
 from django.conf.urls import *
-from aircraft.views import archives
+#from modulo.views import archives
 
-urlpatterns = patterns('',
-   url(r'^$', archives),
-)
+#urlpatterns = patterns('',
+#   url(r'^$', archives),
+#)
