@@ -1,72 +1,86 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
-import openpyxl
+from django.utils import timezone
+
+import xlrd
+import datetime as dt
+import pytz
 
 from mapi.models import Mapi
 from aircraft.models import Aircraft, Fleet, Operator
 
 
+def DateExcelToPython(workbook, sheet, rx, cell):
+    try:
+        xldate = sheet.cell_value(rowx=rx, colx=cell)
+        tuple_date = xlrd.xldate_as_tuple(xldate, workbook.datemode)
+        pydatetime = dt.datetime(*tuple_date)
+        return pydatetime
+    except Exception, e:
+        print e
+
+
 def form_mapi(request):
-    if request.method=='POST':
-        data=request.FILES['archivo']
-        workbook = openpyxl.load_workbook(filename=data, use_iterators=True)
-        worksheet = workbook.get_sheet_by_name('Hoja1')
-        for row in worksheet.iter_rows():
-            data = {
-                    'Col_1': row[0].value,
-                    'Col_2': row[1].value,
-                    'Col_3': row[2].value,
-                    'col_4': row[3].value,
-                    'col_5': row[4].value,
-                    'col_6': row[5].value,
-                    'col_7': row[6].value,
-                    'col_8': row[7].value,
-                    'col_9': row[8].value,
-                    'col_10': row[9].value,
-                    'col_11': row[10].value,
-                    'col_12': row[11].value,
-                    'col_13': row[12].value,
-                    'col_14': row[13].value,
-                    'col_15': row[14].value,
-                    'col_16': row[15].value,
-                    'col_17': row[16].value,
-                    'col_18': row[17].value,
-                    'col_19': row[18].value,
-                    'col_20': row[19].value,
-                    }
+    if request.method == 'POST':
+        data = request.FILES['archivo']
+        workbook = xlrd.open_workbook(file_contents=data.read())
+        sheet = workbook.sheet_by_index(0)
 
-            fl, created = Fleet.objects.get_or_create(name=data['Col_1'],
-                  defaults = {})
+        print sheet.name, sheet.nrows, sheet.ncols     
+        
+        if sheet.ncols == 20:
+            for rx in range(1, sheet.nrows):
+                rows = sheet.row_values(rx)
+                print rows[1]
+                
+                if sheet.cell_type(rx, 1) != 0:
+                    fleet, created = Fleet.objects.get_or_create(name=rows[0])
+                    aircraft, created = Aircraft.objects.get_or_create(name=rows[1], 
+                        defaults={'fleet': fleet})
 
-            ac, created = Aircraft.objects.get_or_create(name=data['Col_2'],
-                  defaults = {'fleet':fl})
+                    if rows[6]:
+                        dtlmfl = DateExcelToPython(workbook, sheet, rx, 6)
+                        print dtlmfl
+                    else:
+                        dtlmfl = '2000-01-01 00:00:00'
+                        print 'Vacio col 6'
 
-            #op, created = Operator.objects.get_or_create(name=data['Col_1'],
-            #      defaults={}) 
-            if created:
-                comment = 'Ingresar Operador %s' % (ac)
-                messages.error(request, comment)
+                    if rows[13]:
+                        duedate = DateExcelToPython(workbook, sheet, rx, 13)
+                        print duedate
+                    else:
+                        duedate = '2000-01-01 00:00:00'
+                        print 'Vacio col 13'
 
-            ata = data['Col_3']
-            subAta = data['col_4']
-            week = data['col_5'] 
-            nmfl = data['col_6'] 
-            dtlmfl = data['col_7']  
-            flightNumber = data['col_8'] 
-            sta = data['col_9']  
-            referenceTerm = data['col_10']            
-            nri = data['col_11']
-            dmi = data['col_12'] 
-            cat = data['col_13']  
-            dueDate = data['col_14']
-            discrepancies = data['col_15'] 
-            actionCorrect = data['col_16'] 
-            partNumber = data['col_17'] 
-            position = data['col_18'] 
-            status = data['col_19']
-            foundOnDate = data['col_20']   
-            m = Mapi(aircraft=ac,ata=ata,subAta=subAta,week=week,nmfl=nmfl,dtlmfl=dtlmfl,flightNumber=flightNumber,sta=sta,referenceTerm=referenceTerm,nri=nri,dmi=dmi,cat=cat,dueDate=dueDate,discrepancies=discrepancies,actionCorrect=actionCorrect,partNumber=partNumber,position=position,status=status,foundOnDate=foundOnDate)
-            m.save()
-    return render(request,'form_mapi.html')
+                    if rows[19]:
+                        found_on_date = DateExcelToPython(workbook, sheet, rx, 19)
+                        print found_on_date
+                    else:
+                        #print 'Error'
+                        found_on_date = '2000-01-01 00:00:00'
+                        print 'Vacio col 19'
 
+                    # Save Pireps & Mareps
+                    mapi, created = Mapi.objects.update_or_create(nri=rows[10], 
+                      defaults={
+                        'aircraft':aircraft, 
+                        'ata':rows[2],
+                        'subata':rows[3],
+                        'week':rows[4],
+                        'nmfl':rows[5],
+                        'dtlmfl':dtlmfl,
+                        'flight_number':rows[7],
+                        'sta':rows[8],
+                        'reference_term':rows[9],
+                        'dmi':rows[11],
+                        'cat':rows[12],
+                        'duedate':duedate,
+                        'discrepancies':rows[14],
+                        'action_correct':rows[15],
+                        'part_number':rows[16],
+                        'position':rows[17],
+                        'status':rows[18],
+                        'found_on_date':found_on_date
+                      })
+    return render(request,'mapi/form_mapi.html')
