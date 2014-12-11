@@ -24,7 +24,7 @@ def DateExcelToPython(workbook, sheet, rx, cell):
             return pydatetime
 
     except Exception, e:
-
+        print e
 
 def form_mapi(request):
     if request.method == 'POST':
@@ -46,14 +46,18 @@ def form_mapi(request):
                     duedate = DateExcelToPython(workbook, sheet, rx, 13)
                     found_on_date = DateExcelToPython(workbook, sheet, rx, 19)
 
-  
+                    if rows[3]:
+                        subata = rows[3]
+                    else:
+                        subata = None
+
 
                     # Save Pireps & Mareps
                     mapi, created = Mapi.objects.update_or_create(nri=rows[10], 
                       defaults={
                         'aircraft': aircraft, 
                         'ata': rows[2],
-                        'subata': rows[3],
+                        'subata': subata,
                         'week': rows[4],
                         'nmfl': rows[5],
                         'dtlmfl': dtlmfl,
