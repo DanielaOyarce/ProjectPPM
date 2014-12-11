@@ -41,46 +41,51 @@ def form_mapi(request):
 
                     if rows[6]:
                         dtlmfl = DateExcelToPython(workbook, sheet, rx, 6)
-                        print dtlmfl
+                        dd1 = dtlmfl.strftime("%Y-%m-%d %H:%M:%S")
+                        print dd1
                     else:
-                        dtlmfl = '2000-01-01 00:00:00'
+                        dd1 = '2000-01-01 00:00:00'
                         print 'Vacio col 6'
 
                     if rows[13]:
                         duedate = DateExcelToPython(workbook, sheet, rx, 13)
-                        print duedate
+                        dd2 = duedate.strftime("%Y-%m-%d %H:%M:%S")
+                        print dd2
                     else:
-                        duedate = '2000-01-01 00:00:00'
+                        dd2 = '2000-01-01 00:00:00'
                         print 'Vacio col 13'
 
                     if rows[19]:
                         found_on_date = DateExcelToPython(workbook, sheet, rx, 19)
-                        print found_on_date
+                        dd3 = found_on_date.strftime("%Y-%m-%d %H:%M:%S")
+                        print dd3
                     else:
                         #print 'Error'
-                        found_on_date = '2000-01-01 00:00:00'
+                        dd2 = '2000-01-01 00:00:00'
                         print 'Vacio col 19'
+
+
 
                     # Save Pireps & Mareps
                     mapi, created = Mapi.objects.update_or_create(nri=rows[10], 
                       defaults={
-                        'aircraft':aircraft, 
-                        'ata':rows[2],
-                        'subata':rows[3],
-                        'week':rows[4],
-                        'nmfl':rows[5],
-                        'dtlmfl':dtlmfl,
-                        'flight_number':rows[7],
-                        'sta':rows[8],
-                        'reference_term':rows[9],
-                        'dmi':rows[11],
-                        'cat':rows[12],
-                        'duedate':duedate,
-                        'discrepancies':rows[14],
-                        'action_correct':rows[15],
-                        'part_number':rows[16],
-                        'position':rows[17],
-                        'status':rows[18],
-                        'found_on_date':found_on_date
+                        'aircraft': aircraft, 
+                        'ata': rows[2],
+                        'subata': rows[3],
+                        'week': rows[4],
+                        'nmfl': rows[5],
+                        'dtlmfl': dd1,
+                        'flight_number': rows[7],
+                        'sta': rows[8],
+                        'reference_term': rows[9],
+                        'dmi': rows[11],
+                        'cat': rows[12],
+                        'duedate': dd2,
+                        'discrepancies': rows[14],
+                        'action_correct': rows[15],
+                        'part_number': rows[16],
+                        'position': rows[17],
+                        'status': rows[18],
+                        'found_on_date': dd3
                       })
     return render(request,'mapi/form_mapi.html')
