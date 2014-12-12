@@ -13,6 +13,14 @@ from aircraft.models import Aircraft, Fleet, Operator
 
 
 
+def date_default(date):
+    dd = date.split("-")                    
+    d1 = dt.date(int(dd[0]),int(dd[1]),int(dd[2]))
+    d2 = d1.replace(day=01)
+    return d2
+
+
+
 def form_hourscycles(request):
     if request.method == 'POST':
         data = request.FILES['archivo']
@@ -30,12 +38,10 @@ def form_hourscycles(request):
                     aircraft, created = Aircraft.objects.get_or_create(name=rows[1], 
                         defaults={'fleet': fleet})  
 
-                    dd = date.split("-")                    
-                    d1 = dt.date(int(dd[0]),int(dd[1]),int(dd[2]))
-                    d2 = d1.replace(day=01)
-                    
+                    new_date = date_default(date)
+
                     # Save Hourscycles
-                    hourscycles, created = Hourscycles.objects.update_or_create(aircraft=aircraft, date=d2, 
+                    hourscycles, created = Hourscycles.objects.update_or_create(aircraft=aircraft, date=new_date, 
                       defaults={ 
 						'flight_hours': rows[2],
 						'block_hours': rows[3],
