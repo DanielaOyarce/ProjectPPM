@@ -1,0 +1,20 @@
+<html lang="en">
+<head>
+    <title>	</title>
+</head>
+<body>
+  <h1></h1>
+  <form action="" method="POST" enctype="multipart/form-data">
+  	{% csrf_token %}
+		<div>
+			<input type="file" name="archivo" id="archivo">
+		</div>
+    <div>
+      <input type="date" name="date" id="date" required="required" >
+    </div>
+		<div>
+   			<input type="submit" name="submit" value="leer">
+		</div>
+  </form>
+</body>
+</html>

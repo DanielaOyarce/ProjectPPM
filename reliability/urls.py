@@ -5,7 +5,11 @@ admin.autodiscover()
 urlpatterns = patterns('',
   #  url(r'^$', include('aircraft.urls')),
   #  url(r'^reliability/aircraft', include('aircraft.urls')),
+    
     url(r'^$', include('mapi.urls')),
+    url(r'^$', include('hourscycles.urls')),
+    
     url(r'^reliability/mapi', include('mapi.urls')),
+    url(r'^reliability/hourscycles', include('hourscycles.urls')),
     url(r'^reliability/admin/', include(admin.site.urls)),
 )
