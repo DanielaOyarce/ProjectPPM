@@ -23,6 +23,7 @@ class Mapi(models.Model):
 	status = models.CharField(max_length=20)
 	found_on_date = models.DateTimeField(blank=True, null=True)
 	
-		
+	def __str__(self):
+		return self.aircraft	
 
 

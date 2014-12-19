@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -23,8 +24,10 @@ SECRET_KEY = '#w)jc4c06t#+dzo#=%--x(3g9!+s03^ng+4!n$&*lu%)8_r5^8'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
+    
+# Direccion de las tamplates
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
-#TEMPLATE_DIRS = ('C:/Python/Project_Pireps_Mareps/reliability/templates')
 
 ALLOWED_HOSTS = []
 
@@ -32,12 +35,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_tables2',
+    'mathfilters',  
     'aircraft',
     'mapi',
     'hourscycles',
@@ -91,3 +97,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)

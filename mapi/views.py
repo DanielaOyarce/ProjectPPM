@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views.generic import TemplateView
 from django.contrib import messages
 from django.utils import timezone
 
@@ -9,6 +10,14 @@ import pytz
 
 from mapi.models import Mapi
 from aircraft.models import Aircraft, Fleet, Operator
+
+
+class HomeView(TemplateView):
+    template_name = "mapi/index.html"
+
+
+def ReportView(request):
+    return render(request, "mapi/graph.html")
 
 
 def DateExcelToPython(workbook, sheet, rx, cell):
@@ -26,7 +35,8 @@ def DateExcelToPython(workbook, sheet, rx, cell):
     except Exception, e:
         print e
 
-def form_mapi(request):
+
+def UploadMapiView(request):
     if request.method == 'POST':
         data = request.FILES['archivo']
         workbook = xlrd.open_workbook(file_contents=data.read())
@@ -74,4 +84,4 @@ def form_mapi(request):
                         'status': rows[18],
                         'found_on_date': found_on_date
                       })
-    return render(request,'hourscycles/form_hourscycles.html')
+    return render(request, 'mapi/form_mapi.html')

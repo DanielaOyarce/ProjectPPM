@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Load Hours and Cycles{% endblock %}
+<html>
+<head>
+  <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+</head>
+<body>
+{% block content %}
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3>Utilization Hours and Cycles</h3>
+        <br />
+        <form action="" method="post" enctype="multipart/form-data" class="form-inline" role="form">
+          {% csrf_token %}
+          <div class="form-group">
+            <div class="input-group">
+              <label>Fleet</label>
+              <select class="form-control" name="fleet" id="fleet">
+              {% for f in fl %}
+                <option value={{ f }}>{{ f.name }}</option>
+              {% endfor %}
+              </select>            
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group">
+              <label>Date Report</label>
+              <input type="date" name="date" id="date" class="form-control" value="2014-11-01">
+            </div>  
+          </div> 
+          <div class="form-group">
+            <div class="input-group">
+              <label>Operator</label>
+              <select class="form-control" name="operator" id="operator">
+              {% for o in op %}
+                <option value={{ o }}>{{ o.name }}</option>
+              {% endfor %}
+              </select>
+            </div> 
+          </div> 
+          <button type="submit" class="btn btn-primary" name="search" id="search">Search</button>
+        </form>
+      </div> 
+    </div>  
+    <br/>
+    Date:{{ date }} <br>Fleet:{{ fleet_ut }}
+    <br/>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Aircraft</th>
+          <th>Flight Hours</th>
+          <th>Days Flown</th>
+          <th>Utilization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for h in items %}
+          <td>{{ h.aircraft }}</td>
+          <td>{{ h.flight_hours }}</td>
+          <td>{{ h.days_flown }}</td>
+          <td>{{ h.Utilidad }}</td>   
+        </tr>
+          {% endfor %}
+      </tbody>   
+    </table>
+{% endblock %}    
+</body>
+</html>
