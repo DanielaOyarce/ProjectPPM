@@ -5,10 +5,12 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Sum, Count
 from django.db import connection
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 import xlrd
 import datetime as dt
+import time
 import string
 import pytz
 import sys
@@ -41,8 +43,7 @@ def UploadHoursCyclesView(request):
         date = request.POST['date']
         workbook = xlrd.open_workbook(file_contents=data.read())
         sheet = workbook.sheet_by_index(0)
- 		
-        
+
         if sheet.ncols == 9:
             for rx in range(1, sheet.nrows):
                 rows = sheet.row_values(rx)
@@ -135,8 +136,6 @@ def graphics_utilization(request):
         fleet_ut = request.POST['fleet']
      
         query = "SELECT DISTINCT aircraft_aircraft.id, aircraft_aircraft.name AS aircraft, aircraft_aircraft.fleet_id, aircraft_fleet.name, aircraft_fleet.id,hourscycles_hourscycles.aircraft_id, hourscycles_hourscycles.date, hourscycles_hourscycles.flight_hours, hourscycles_hourscycles.days_flown, hourscycles_hourscycles.flight_hours/hourscycles_hourscycles.days_flown AS Utilidad FROM aircraft_aircraft, aircraft_fleet, hourscycles_hourscycles WHERE   aircraft_aircraft.fleet_id=aircraft_fleet.id AND hourscycles_hourscycles.aircraft_id=aircraft_aircraft.id AND hourscycles_hourscycles.date='"+ date +"' AND aircraft_fleet.name='"+ fleet_ut +"' AND aircraft_aircraft.name like 'CC%' GROUP BY aircraft_aircraft.name ORDER BY aircraft_aircraft.name ASC"
-        
-
         items = GetDic(query)
 
         data = {
@@ -153,3 +152,41 @@ def graphics_utilization(request):
             }
 
     return render(request,'hourscycles/graphics_utilization.html', data)
+
+
+def rate_pireps(request):
+    fl = Fleet.objects.all()
+    if request.method == 'POST':
+        date_from = request.POST['date_from']
+        date_to = request.POST['date_to']
+        fleet_ut = request.POST['fleet']
+
+        month = date_from.split('-')
+
+        #format_date = date_to.strftime("%Y-%m")
+
+        fh = Hourscycles.objects.filter(aircraft__fleet__name=fleet_ut, date__month=month[1], aircraft__name__startswith='CC').exclude(aircraft__name='CC-CZZ').aggregate(Sum('flight_hours'))
+        print fh
+
+        query = "SELECT *, count(ata) AS contar  FROM mapi_mapi, aircraft_aircraft, aircraft_fleet WHERE mapi_mapi.aircraft_id = aircraft_aircraft.id AND aircraft_fleet.id = aircraft_aircraft.fleet_id AND aircraft_fleet.name ='"+ fleet_ut +"' AND mapi_mapi.found_on_date >='"+ date_from +"' AND mapi_mapi.found_on_date <= '"+ date_to +"' AND mapi_mapi.reference_term='PIREP' AND mapi_mapi.ata >= 21 AND mapi_mapi.ata <= 80 AND aircraft_aircraft.name LIKE 'CC%' GROUP BY ata ORDER BY ata"
+        items = GetDic(query)
+
+        pirep = []
+        for i in items:
+            calculo = (i['contar']/fh['flight_hours__sum'])*1000
+            pirep.append((calculo, i['ata'], date_from)) 
+
+        data = {
+            'fh':fh['flight_hours__sum'],
+            'pirep':pirep,
+            'date_from':date_from,
+            'date_to':date_to,
+            'fleet_ut':fleet_ut,
+            'items':items,
+            'fl':fl,
+        }
+
+        return render(request,'hourscycles/rate_pireps.html', data)
+
+    data = {'fl':fl}
+    return render(request,'hourscycles/rate_pireps.html', data)

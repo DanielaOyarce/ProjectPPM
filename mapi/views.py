@@ -40,9 +40,7 @@ def UploadMapiView(request):
     if request.method == 'POST':
         data = request.FILES['archivo']
         workbook = xlrd.open_workbook(file_contents=data.read())
-        sheet = workbook.sheet_by_index(0)
- 
-        
+        sheet = workbook.sheet_by_index(0)       
         if sheet.ncols == 20:
             for rx in range(1, sheet.nrows):
                 rows = sheet.row_values(rx)

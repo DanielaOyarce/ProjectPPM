@@ -45,7 +45,7 @@
     <br/>
     Date:{{ date }} <br>Fleet:{{ fleet_ut }}
     <br/>
-    <table class="table table-condensed">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th>Aircraft</th>
@@ -58,9 +58,9 @@
         <tr>
           {% for h in items %}
           <td>{{ h.aircraft }}</td>
-          <td>{{ h.flight_hours }}</td>
+          <td>{{ h.flight_hours|floatformat:2 }}</td>
           <td>{{ h.days_flown }}</td>
-          <td>{{ h.Utilidad }}</td>   
+          <td>{{ h.Utilidad|floatformat:2 }}</td>   
         </tr>
           {% endfor %}
       </tbody>   

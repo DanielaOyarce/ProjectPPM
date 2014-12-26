@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load django_tables2 %}
 {% block title %}Load Hours and Cycles{% endblock %}
 <html>
 <head>
@@ -32,15 +31,15 @@
           <div class="form-group">
             <div class="input-group">
               <label>Operator</label>
-              <select class="form-control" name="operator" id="operator">
-              {% for o in op %}
-                <option value={{ o }}>{{ o.name }}</option>
-              {% endfor %}
-              </select>
+             </select>
             </div> 
           </div> 
           <button type="submit" class="btn btn-primary" name="search" id="search">Search</button>
-        </form>
+        </form>   <select class="form-control" name="operator" id="operator">
+              {% for o in op %}
+                <option value={{ o }}>{{ o.name }}</option>
+              {% endfor %}
+            
       </div> 
     </div>  
     <br />
