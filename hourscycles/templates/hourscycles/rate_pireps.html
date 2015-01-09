@@ -25,7 +25,7 @@
           <div class="form-group">
             <div class="input-group">
               <label>Date from</label>
-              <input type="date" name="date_from" id="date_from" class="form-control" value="2014-11-01" required>
+              <input type="date" name="date_from" id="date_from" class="form-control" value="2013-11-01" required>
             </div>  
             <div class="input-group">
               <label>Date to</label>
@@ -39,56 +39,38 @@
     <br />
     <br />   
     Date From : {{ date_from }} - Date To : {{ date_to }} -  Fleet : {{ fleet_ut }}
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered"> 
       <thead>
         <tr>
-          <th>RATE</th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th>{{ fh|floatformat:2 }}</th>
-        </tr>
-        <tr>
-          <th>Ata</th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th>{{ date_from }}</th>
+          <tr> 
+          <th>Rate</th>
+          {% for r,s,t in rate %}
+            <th>{{ r.flight_hours__sum|floatformat:1 }}</th>
+          {% endfor %}
+          </tr>
+          <tr>
+            <th>Ata</th>
+          {% for d in d %}
+            <th>{{ d }}</th>
+          {% endfor %}
+          </tr>          
         </tr>
       </thead>
       <tbody>
-        <tr>
-        {% for h,p,d in pirep %}
-          <td>{{ p }}</td>
-          <td></td>
-          <td></td>    
-          <td></td>
-          <td></td>   
-          <td></td>
-          <td></td>   
-          <td></td>
-          <td></td> 
-          <td></td>
-          <td></td>         
-          <td>{{ h|floatformat:2 }}</td>          
-        </tr> 
-        {% endfor %}   
-      </tbody>          
+          <tr>
+          {% for e in atas %}  
+              <td>{{ e }}</td>
+            {% for a,b,c in pirep %} <!-- resultado, ata, fecha  -->
+                {% if e == b %}            
+                  <td>{{ a|floatformat:2 }}{{ '<br/>' }}{{ c }}</td> 
+                {% endif %}                
+            {% endfor %}  
+            </tr>           
+          {% endfor %} 
+      </tbody>
     </table>
+    {{ result }}
+
 {% endblock %}
 </body>
 </html>
